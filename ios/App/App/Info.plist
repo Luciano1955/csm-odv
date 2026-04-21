@@ -2,12 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <key>CAPACITOR_DEBUG</key>
+	<key>CAPACITOR_DEBUG</key>
 	<string>$(CAPACITOR_DEBUG)</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-        <string>CSM ODV</string>
+	<string>CSM ODV</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -46,17 +46,14 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
-	
+	<true/>
 	<key>NSLocationWhenInUseUsageDescription</key>
-		<string>Tracking durante il servizio</string>
-
+	<string>Tracking durante il servizio</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-		<string>Tracking anche in background</string>
-
+	<string>Tracking anche in background</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>location</string>
 	</array>
-	<true/>
 </dict>
 </plist>
