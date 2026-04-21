@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>CSM ODV v1.0</title>
+
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <link rel="stylesheet" href="style.css?v=3">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!-- 🔥 Capacitor runtime -->
+    <script type="module" src="capacitor.js"></script>
+</head>
+
+<body>
+
+    <!-- Schermata di Login -->
+    <div id="login-page" class="page active">
+        <div class="login-container">
+            <div style="background: #1976d2; color: white; padding: 10px; margin-bottom: 20px; border-radius: 8px;">CMS ODV v8</div>
+            <div class="logo-wrapper">
+                <img src="./logo.png" alt="Logo" class="login-logo" onerror="this.style.display='none'; document.getElementById('logo-fallback').style.display='block';">
+                <i id="logo-fallback" class="material-icons" style="display:none; font-size: 80px; color: var(--primary-color);">account_balance</i>
+            </div>
+            <h1>Login</h1>
+            <div class="input-group">
+                <input type="text" id="username" placeholder="Username">
+            </div>
+            <div class="input-group password-wrapper">
+                <input type="password" id="password" placeholder="Password">
+                <i class="material-icons toggle-password" id="btn-toggle-password">visibility_off</i>
+            </div>
+            <button id="btn-login">ACCEDI</button>
+            <div id="login-loader" class="loader hidden"></div>
+        </div>
+    </div>
+
+    <!-- Schermata Principale -->
+    <div id="main-page" class="page hidden">
+        <header>
+            <button id="btn-menu"><i class="material-icons">menu</i></button>
+            <span id="page-title" class="title">Servizi Disponibili</span>
+            <button id="btn-refresh"><i class="material-icons">refresh</i></button>
+        </header>
+
+        <!-- Sezione Servizi -->
+        <section id="services-section" class="content-section hidden">
+            <main id="services-list">
+                <div class="empty-state">Caricamento servizi...</div>
+            </main>
+            <div class="pagination">
+                <button id="prev-page" disabled>Indietro</button>
+                <span id="page-num">Pagina 1</span>
+                <button id="next-page">Avanti</button>
+            </div>
+        </section>
+
+        <!-- Sezione Tracking -->
+        <section id="tracking-section" class="content-section">
+            <div class="tracking-container">
+                <!-- Bottone selezione (stile Android) -->
+                <div id="selection-prompt" class="selection-container">
+                    <button id="btn-select-service-list" class="btn-outlined">SELEZIONA SERVIZIO DALLA LISTA</button>
+                </div>
+
+                <div id="tracking-card" class="card hidden">
+                    <div id="tracking-status-header">
+                        <div class="status-indicator">
+                            <span id="gps-status-dot" class="dot"></span>
+                            <span id="gps-status-text">Tracking Inattivo</span>
+                        </div>
+                        <button id="btn-change-service" class="btn-flat small">CAMBIA SERVIZIO</button>
+                    </div>
+
+                    <div id="active-service-info">
+                        <p><strong>Servizio:</strong> <span id="track-service-label"></span></p>
+                        <p><strong>Ref:</strong> <span id="track-service-ref"></span></p>
+                    </div>
+                    <div class="gps-coords">
+                        <p id="current-pos">Posizione: --, --</p>
+                        <p id="last-update">Ultimo aggiornamento: --:--</p>
+                    </div>
+                    <button id="btn-toggle-tracking" class="btn-raised">AVVIA TRACKING</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sezione Impostazioni -->
+        <section id="settings-section" class="content-section hidden">
+            <div class="settings-container">
+                <div class="card">
+                    <h2>Impostazioni</h2>
+                    <div class="input-group">
+                        <label>Limite pagine</label>
+                        <input type="number" id="set-page-limit" value="10">
+                    </div>
+                    <div class="switch-group">
+                        <label>
+                            <input type="checkbox" id="set-show-gps" checked>
+                            Mostra info GPS
+                        </label>
+                    </div>
+                    <button id="btn-save-settings" class="btn-raised">SALVA</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Modal Dettaglio Servizio -->
+    <div id="detail-modal" class="modal hidden">
+        <div class="modal-content">
+            <h2 id="modal-title">Dettaglio Servizio</h2>
+            <div class="modal-body">
+                <p><strong id="detail-name"></strong></p>
+                <p id="detail-id"></p>
+                <p id="detail-description"></p>
+                <hr>
+                <p id="detail-volontari"></p>
+                <p id="detail-data-inizio"></p>
+
+                <div id="fasce-container" class="hidden">
+                    <label for="fasce-select">Seleziona Fascia Oraria:</label>
+                    <select id="fasce-select"></select>
+                </div>
+
+                <div class="input-group">
+                    <textarea id="detail-comment" placeholder="Commento (opzionale)"></textarea>
+                </div>
+
+                <div class="switch-group">
+                    <label>
+                        <input type="checkbox" id="sw-immediate" checked>
+                        Avvio immediato
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-modal-reject" class="btn-flat btn-danger">RIFIUTA</button>
+                <button id="btn-modal-accept" class="btn-raised">ACCETTA</button>
+                <button id="btn-modal-close" class="btn-flat">CHIUDI</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Menu Laterale (Drawer) -->
+    <div id="side-menu" class="drawer">
+        <div class="drawer-header">
+            <div class="logo-wrapper-small">
+                <img src="logo.png" alt="Logo" onerror="this.style.display='none';">
+            </div>
+            <p id="user-full-name">Utente</p>
+        </div>
+        <ul>
+<!--        <li id="menu-services"><i class="material-icons">assignment</i> Servizi</li>-->
+            <li id="menu-tracking"><i class="material-icons">location_on</i> Servizi</li>
+            <li id="menu-settings"><i class="material-icons">settings</i> Impostazioni</li>
+            <li id="menu-logout"><i class="material-icons">exit_to_app</i> Logout</li>
+        </ul>
+    </div>
+    <div id="drawer-overlay" class="overlay hidden"></div>
+
+    <!-- Toast Container -->
+    <div id="toast"></div>
+
+    <script src="app.js?v=8"></script>
+</body>
+</html>
